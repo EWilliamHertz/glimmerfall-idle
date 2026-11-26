@@ -1,0 +1,156 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "Warden Profile",
+      "description": "Authenticated GlimmerFall player account profile registered via Firebase Google Sign-In.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Firebase Authentication UID matching the document ID."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 254,
+          "description": "Verified account email address (PII, restricted to owner and admin)."
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 40,
+          "description": "In-game Warden display name."
+        },
+        "covenant": {
+          "type": "string",
+          "enum": ["Solari", "Terra", "Aether", "Umbri"],
+          "description": "Selected GlimmerFall elemental Covenant."
+        },
+        "playerId": {
+          "type": "string",
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Linked cross-platform GlimmerFall Warden sync identifier."
+        },
+        "photoUrl": {
+          "type": "string",
+          "maxLength": 512,
+          "description": "Optional Google avatar URL."
+        },
+        "role": {
+          "type": "string",
+          "enum": ["warden"],
+          "description": "Fixed player role; elevated admin access is stored separately in /admins."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of initial registration."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last profile update."
+        }
+      },
+      "required": [
+        "uid",
+        "email",
+        "displayName",
+        "covenant",
+        "playerId",
+        "photoUrl",
+        "role",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "DailyQuestProgress": {
+      "title": "Daily Quest Progress",
+      "description": "UTC daily quest progress and claimed reward tracking per registered Warden.",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Owner Firebase Auth UID."
+        },
+        "dateKey": {
+          "type": "string",
+          "maxLength": 10,
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "description": "UTC date key YYYY-MM-DD."
+        },
+        "tapsCompleted": {
+          "type": "number",
+          "description": "Count of Glimmer Nodes channeled today."
+        },
+        "upgradesCompleted": {
+          "type": "number",
+          "description": "Count of Entity or Artisan upgrades completed today."
+        },
+        "duelsCompleted": {
+          "type": "number",
+          "description": "Count of Nexus PvP duels completed today."
+        },
+        "blocksAnchored": {
+          "type": "number",
+          "description": "Count of GlimmerChain state blocks anchored today."
+        },
+        "claimedQuestIds": {
+          "type": "array",
+          "description": "Allowlisted quest IDs claimed today (max 6 entries)."
+        },
+        "streakCount": {
+          "type": "number",
+          "description": "Consecutive daily quest streak count."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "all_claimed"],
+          "description": "Daily quest completion state; locks to terminal all_claimed when every quest is claimed."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when today's quest log was initialized."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of latest quest progress or claim."
+        }
+      },
+      "required": [
+        "ownerId",
+        "dateKey",
+        "tapsCompleted",
+        "upgradesCompleted",
+        "duelsCompleted",
+        "blocksAnchored",
+        "claimedQuestIds",
+        "streakCount",
+        "status",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/UserProfile"
+      },
+      "description": "Private authenticated user profile documents isolated by owner UID."
+    },
+    "/users/{userId}/dailyQuests/{questDate}": {
+      "schema": {
+        "$ref": "#/entities/DailyQuestProgress"
+      },
+      "description": "Daily quest progress and reward claim documents scoped to each authenticated user."
+    }
+  }
+}

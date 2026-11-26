@@ -1,0 +1,6 @@
+{
+  "name": "GlimmerFall IDLE",
+  "description": "GlimmerFall incremental idle RPG & Nexus PvP arena rooted in glimmerfall.online, glimmerfalltcg.com, and manga.glimmerfall.online with mystical forest realms, NFT entity skins, and blockchain-anchored state.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
